@@ -5,6 +5,9 @@ const pool = require('./mysql')
 
 const app = express()
 
+const propertiesRouter = require('./routes/properties');
+app.use('/api/properties', propertiesRouter);
+
 app.get('/api/health', async (req, res) => {
     try {
         await pool.query('SELECT 1')
