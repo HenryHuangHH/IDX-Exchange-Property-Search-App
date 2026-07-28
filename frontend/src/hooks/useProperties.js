@@ -35,7 +35,7 @@ export function useProperties(params = { limit: 20, offset: 0 }) {
     return () => {
       cancelled = true;
     };
-  }, [params.limit, params.offset]);
+  }, [JSON.stringify(params)]);
 
   return { properties, total, loading, error };
 }

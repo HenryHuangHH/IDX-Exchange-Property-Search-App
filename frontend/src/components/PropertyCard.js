@@ -37,7 +37,7 @@ function PropertyCard({ listing }) {
       </div>
 
       <div className="space-y-2 p-4">
-        <p className="text-xl font-bold text-blue-700">{formatPrice(listing.L_SystemPrice)}</p>
+        <p className="text-xl font-bold text-slate-900">{formatPrice(listing.L_SystemPrice)}</p>
         <p className="font-medium text-slate-900">{listing.L_Address || 'Address unavailable'}</p>
         <p className="text-sm text-slate-500">{location || 'Location unavailable'}</p>
 
