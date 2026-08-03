@@ -1,19 +1,37 @@
 import { useMemo, useState } from 'react';
+import Pagination from '../components/Pagination';
 import PropertyCard from '../components/PropertyCard';
 import PropertyFilters from '../components/PropertyFilters';
 import { useProperties } from '../hooks/useProperties';
 
 function ListingsPage() {
   const [filters, setFilters] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(21);
 
   const params = useMemo(() => {
-    const merged = { limit: 20, offset: 0, ...filters };
+    const merged = {
+      limit: itemsPerPage,
+      offset: (currentPage - 1) * itemsPerPage,
+      ...filters,
+    };
     return Object.fromEntries(
       Object.entries(merged).filter(([, value]) => value !== '' && value !== undefined && value !== null)
     );
-  }, [filters]);
+  }, [filters, currentPage, itemsPerPage]);
+
+  function handleApplyFilters(nextFilters) {
+    setFilters(nextFilters);
+    setCurrentPage(1);
+  }
+
+  function handlePageChange(page) {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   const { properties, total, loading, error } = useProperties(params);
+  const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -26,7 +44,7 @@ function ListingsPage() {
         )}
       </header>
 
-      <PropertyFilters onApply={setFilters} />
+      <PropertyFilters onApply={handleApplyFilters} />
 
       {loading && (
         <div className="flex min-h-[40vh] items-center justify-center text-lg text-slate-600">
@@ -42,12 +60,26 @@ function ListingsPage() {
         </div>
       )}
 
-      {!loading && !error && (
-        <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {properties.map((listing) => (
-            <PropertyCard key={listing.L_ListingID} listing={listing} />
-          ))}
-        </section>
+      {!loading && !error && properties.length === 0 && (
+        <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-600">
+          No properties found.
+        </div>
+      )}
+
+      {!loading && !error && properties.length > 0 && (
+        <>
+          <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {properties.map((listing) => (
+              <PropertyCard key={listing.L_ListingID} listing={listing} />
+            ))}
+          </section>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
       )}
     </main>
   );
