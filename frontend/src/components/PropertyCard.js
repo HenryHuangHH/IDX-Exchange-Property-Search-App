@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { getFirstPhotoUrl } from '../utils/parsePhotos';
+import { useNavigate } from 'react-router-dom';
+import PropertyImageCarousel from './PropertyImageCarousel';
 
 function formatPrice(price) {
   if (price == null) {
@@ -13,28 +13,19 @@ function formatPrice(price) {
 }
 
 function PropertyCard({ listing }) {
-  const [imageError, setImageError] = useState(false);
-  const photoUrl = getFirstPhotoUrl(listing.L_Photos);
-  const showPhoto = photoUrl && !imageError;
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/property/${listing.L_ListingID}`);
+  };
 
   const location = [listing.L_City, listing.L_State].filter(Boolean).join(', ');
 
   return (
-    <article className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg">
-      <div className="relative h-48 bg-slate-100">
-        {showPhoto ? (
-          <img
-            src={photoUrl}
-            alt={listing.L_Address || 'Property'}
-            className="h-full w-full object-cover"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-sm text-slate-400">
-            No photo available
-          </div>
-        )}
-      </div>
+    <article
+      className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+      onClick={handleClick}
+    >
+      <PropertyImageCarousel photos={listing.L_Photos} />
 
       <div className="space-y-2 p-4">
         <p className="text-xl font-bold text-slate-900">{formatPrice(listing.L_SystemPrice)}</p>
