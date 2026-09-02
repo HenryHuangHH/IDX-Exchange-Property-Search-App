@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Pagination from '../components/Pagination';
 import PropertyCard from '../components/PropertyCard';
 import PropertyFilters from '../components/PropertyFilters';
@@ -36,7 +37,12 @@ function ListingsPage() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Property Listings</h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Property Listings</h1>
+          <Link to="/favorites" className="text-slate-700 underline">
+            Favorites
+          </Link>
+        </div>
         {!loading && !error && (
           <p className="mt-2 text-slate-600">
             Showing {properties.length} of {total} properties

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import PropertyImageCarousel from './PropertyImageCarousel';
+import { useFavorites } from '../hooks/useFavorites';
 
 function formatPrice(price) {
   if (price == null) {
@@ -14,17 +15,38 @@ function formatPrice(price) {
 
 function PropertyCard({ listing }) {
   const navigate = useNavigate();
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+  const favorite = isFavorite(listing.L_ListingID);
+
   const handleClick = () => {
     navigate(`/property/${listing.L_ListingID}`);
+  };
+
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation();
+    if (favorite) {
+      removeFavorite(listing.L_ListingID);
+    } else {
+      addFavorite(listing.L_ListingID);
+    }
   };
 
   const location = [listing.L_City, listing.L_State].filter(Boolean).join(', ');
 
   return (
     <article
-      className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+      className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
       onClick={handleClick}
     >
+      <button
+        type="button"
+        className={`favorite-btn absolute right-2 top-2 z-10 rounded-full bg-white/90 px-2 py-1 text-lg ${favorite ? 'active' : ''}`}
+        onClick={handleFavoriteClick}
+        aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
+      >
+        {favorite ? '⭐' : '☆'}
+      </button>
+
       <PropertyImageCarousel photos={listing.L_Photos} />
 
       <div className="space-y-2 p-4">
